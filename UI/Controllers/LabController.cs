@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace WEB_353502_Belavusau.Controllers;
+namespace UI.Controllers;
 
 public class LabController : Controller
 {

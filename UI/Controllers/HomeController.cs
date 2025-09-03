@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace WEB_353502_Belavusau.Controllers;
+namespace UI.Controllers;
 
 public class HomeController : Controller
 {

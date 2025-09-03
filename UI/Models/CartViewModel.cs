@@ -1,4 +1,4 @@
-namespace WEB_353502_Belavusau.Models;
+namespace UI.Models;
 
 public class CartViewModel
 {

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using WEB_353502_Belavusau.Models;
+using UI.Models;
 
-namespace WEB_353502_Belavusau.Components;
+namespace UI.Components;
 
 public class CartViewComponent : ViewComponent
 {
