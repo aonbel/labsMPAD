@@ -13,46 +13,9 @@
 <header>
     <nav class="navbar bg-white navbar-expand-md border-bottom border-body"
          data-bs-theme="light">
-        <a class="navbar-brand" href="/">Labs</a>
-        <div class="navbar-nav">
-            <a class="nav-item nav-link active" href="/FirstLab">Лр 1</a>
-            <a class="nav-item nav-link" href="#">Каталог</a>
-            <a class="nav-item nav-link" href="#">Администрирование</a>
-        </div>
-
-        <a href="#" class="navbar-text ms-auto">
-            00,0 руб <i class="bi bi-cart"></i> (0)
-        </a>
-
-        <div class="dropdown ms-4 nav-color">
-            <button class="btn btn-secondary dropdown-toggle"
-                    type="button" id="dropdownMenuButton"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false">
-                User@gmail.com
-                <img src="/images/default-profile-picture.png" width="30"
-                     alt="User" class="rounded nav-color"/>
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <li>
-                    <span class="dropdown-item-text">
-                        <img src="/images/default-profile-picture.png"
-                             width="50" alt="User" class="rounded"/>
-                        User@gmail.com
-                    </span>
-                </li>
-                <li>
-                    <hr class="dropdown-divider">
-                </li>
-                <li>
-                    <form id="logoutForm" class="form-inline dropdown-item" method="post">
-                        <button id="logout" type="submit" class="nav-link btn btn-link text-dark">Logout
-                        </button>
-                    </form>
-                </li>
-            </ul>
-        </div>
-    </nav>
+        <partial name="_MenuLayout"/>
+        <partial name="_UserInfo"/>
+    </nav>  
 </header>
 
 <div class="container">

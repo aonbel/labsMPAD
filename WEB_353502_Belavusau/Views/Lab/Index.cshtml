@@ -1,24 +1,32 @@
 @{
     Layout = "_Layout";
-    ViewBag.Title = "First lab";
-    ViewData["Title"] = "First lab";
+    var selectItems = new SelectList(new List<ListDemo>
+    {
+        new ListDemo { Id = 1, Name = "a" },
+        new ListDemo { Id = 2, Name = "b" },
+        new ListDemo { Id = 3, Name = "c" },
+    }, "Id", "Name");
 }
 
 <body>
     <div>
-        <h3>Лабораторная работа 1</h3>
+        <h3>@ViewData["Title"]</h3>
         <h2>Список</h2>
         <ol type="A">
-            <li>
-                Элемент 1 списка
-            </li>
-            <li>
-                Элемент 2 списка
-            </li>
+            @for (var i = 0; i < 10; i++)
+            {
+                <li>
+                    Элемент @i списка
+                </li>
+            }   
         </ol>
         <hr/>
         <h2>Форма</h2>
         <form method="post">
+            
+            <div class="row mb-3">
+                <select name="select" asp-items="@selectItems"></select>
+            </div>
 
             <div class="row mb-3 offset-sm-2">
                 <div class="form-check">
@@ -34,26 +42,26 @@
                 </div>
             </div>
 
-                <div class="row mb-3 offset-sm-2">
-                    <div class="col-2">
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="radio1" id="radio1">
-                            <label class="form-check-label" for="radio1">Радио-1</label>
-                        </div>
-                    </div>
-                    <div class="col-2">
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="radio2" id="radio2">
-                            <label class="form-check-label" for="radio2">Радио-2</label>
-                        </div>
-                    </div>
-                    <div class="col-2">
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="radio3" id="radio3">
-                            <label class="form-check-label" for="radio3">Радио-3</label>
-                        </div>
+            <div class="row mb-3 offset-sm-2">
+                <div class="col-2">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="radio1" id="radio1">
+                        <label class="form-check-label" for="radio1">Радио-1</label>
                     </div>
                 </div>
+                <div class="col-2">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="radio2" id="radio2">
+                        <label class="form-check-label" for="radio2">Радио-2</label>
+                    </div>
+                </div>
+                <div class="col-2">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="radio3" id="radio3">
+                        <label class="form-check-label" for="radio3">Радио-3</label>
+                    </div>
+                </div>
+            </div>
 
             <div class="row mb-3">
                 <label for="inputLogin" class="col-sm-2 col-form-label">Логин</label>
