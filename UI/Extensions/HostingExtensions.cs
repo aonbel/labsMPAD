@@ -4,8 +4,12 @@ public static class HostingExtensions
 {
     public static WebApplicationBuilder RegisterCustomServices(this WebApplicationBuilder builder)
     {
-        builder.Services.AddScoped<IGameGenreService, MemoryGameGenreService>();
-        builder.Services.AddScoped<IGameService, MemoryGameService>();
+        var apiUri = builder.Configuration["UriData:ApiUri"];
+        
+        builder.Services.AddHttpClient<IGameGenreService, ApiGameGenreService>(opt =>
+            opt.BaseAddress = new Uri($"{apiUri}/GameGenres"));
+        builder.Services.AddHttpClient<IGameService, ApiGameService>(opt =>
+            opt.BaseAddress = new Uri($"{apiUri}/Games"));
         
         return builder;
     }

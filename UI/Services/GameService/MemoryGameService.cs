@@ -104,14 +104,14 @@ public class MemoryGameService : IGameService
         return Task.FromResult(ResponseData<ListModel<Game>>.Success(result));
     }
 
-    public Task<ResponseData<ListModel<Game>>> GetByFilterAndPageAsync(Func<Game, bool> predicate, int pageNumber = 1,
+    public Task<ResponseData<ListModel<Game>>> GetByGenreIdAndPageAsync(int genreId, int pageNumber = 1,
         int pageSize = 10)
     {
         var result = new ListModel<Game>
         {
-            Items = _games.Where(predicate).Skip(pageSize * (pageNumber - 1)).Take(pageSize).ToList(),
+            Items = _games.Where(g => g.GenreId == genreId).Skip(pageSize * (pageNumber - 1)).Take(pageSize).ToList(),
             CurrentPage = pageNumber,
-            TotalPages = (_games.Where(predicate).Count() + pageSize - 1) / pageSize
+            TotalPages = (_games.Count(g => g.GenreId == genreId) + pageSize - 1) / pageSize
         };
 
         return Task.FromResult(ResponseData<ListModel<Game>>.Success(result));

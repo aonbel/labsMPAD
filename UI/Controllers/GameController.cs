@@ -43,7 +43,7 @@ public class GameController(
 
         if (gameGenreId is not null)
         {
-            gamesResponse = await gameService.GetByFilterAndPageAsync(g => g.GenreId == gameGenreId, pageNumber, itemsPerPage);
+            gamesResponse = await gameService.GetByGenreIdAndPageAsync((int)gameGenreId, pageNumber, itemsPerPage);
         }
         else
         {
