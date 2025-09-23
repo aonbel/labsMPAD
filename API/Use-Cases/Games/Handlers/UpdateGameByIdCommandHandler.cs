@@ -23,6 +23,8 @@ public sealed class UpdateGameByIdCommandHandler(AppDbContext context) : IReques
         game.Price = request.Game.Price;
         game.GenreId = request.Game.GenreId;
         
+        await context.SaveChangesAsync(cancellationToken);
+        
         return ResponseData<Game>.Success(game);
     }
 }

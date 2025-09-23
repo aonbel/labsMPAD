@@ -25,7 +25,7 @@
     <ul class="dropdown-menu" aria-labelledby="genreDropdown">
         <li>
             <a class="dropdown-item"
-               asp-controller="Game"
+               asp-controller="Games"
                asp-action="Index"
                asp-route-gameGenreId="@null">All Games</a>
         </li>
@@ -33,7 +33,7 @@
         {
             <li>
                 <a class="dropdown-item"
-                   asp-controller="Game"
+                   asp-controller="Games"
                    asp-action="Index"
                    asp-route-gameGenreId="@item.Id">
                     @item.Name
@@ -91,7 +91,7 @@
 <nav aria-label="Page navigation example">
     <ul class="pagination">
         <li class="page-item">
-            <a class="page-link @(Model.CurrentPage != 1 ? "" : "disabled")" asp-action="Index" asp-controller="Game"
+            <a class="page-link @(Model.CurrentPage != 1 ? "" : "disabled")" asp-action="Index" asp-controller="Games"
                asp-route-pageNumber="@(Model.CurrentPage - 1)" asp-route-gameGenreId="@gameGenre" aria-label="Previous">
                 <span aria-hidden="true">&laquo;</span>
             </a>
@@ -103,14 +103,14 @@
                     var pageNumInner = pageNum;
                 }
                 <a class="page-link @(Model.CurrentPage != pageNumInner ? "" : "active")" asp-action="Index"
-                   asp-controller="Game"
+                   asp-controller="Games"
                    asp-route-pageNumber="@pageNumInner" asp-route-gameGenreId="@gameGenre">
                     @pageNumInner
                 </a>
             </li>
         }
         <li class="page-item">
-            <a class="page-link @(Model.CurrentPage != Model.TotalPages ? "" : "disabled")" asp-action="Index" asp-controller="Game"
+            <a class="page-link @(Model.CurrentPage != Model.TotalPages ? "" : "disabled")" asp-action="Index" asp-controller="Games"
                asp-route-pageNumber="@(Model.CurrentPage + 1)" asp-route-gameGenreId="@gameGenre" aria-label="Next">
                 <span aria-hidden="true">&raquo;</span>
             </a>

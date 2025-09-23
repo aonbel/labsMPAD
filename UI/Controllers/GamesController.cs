@@ -1,10 +1,9 @@
 using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
-using UI.Services.GameService;
 
 namespace UI.Controllers;
 
-public class GameController(
+public class GamesController(
     IGameService gameService,
     IGameGenreService gameGenreService,
     IConfiguration configuration) : Controller

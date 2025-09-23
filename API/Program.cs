@@ -18,8 +18,6 @@ builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
 });
 
-// builder.Services.AddControllers();
-
 var connectionString = builder.Configuration.GetConnectionString("Postgres");
 
 builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
@@ -34,7 +32,6 @@ using (var scope = app.Services.CreateScope())
 
 await app.SeedData();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -45,8 +42,6 @@ app.UseSwaggerUI();
 
 app.MapGameEndpoints();
 app.MapGameGenreEndpoints();
-
-// app.MapControllers();
 
 app.UseHttpsRedirection();
 

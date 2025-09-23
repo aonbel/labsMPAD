@@ -7,7 +7,7 @@
 `
 <a class="navbar-brand" asp-controller="Home" asp-action="Index">Labs</a>
 <div class="navbar-nav">
-    <a class="nav-item nav-link @(controller=="lab"?"":"active")" asp-controller="Lab" asp-action="Index">Лабораторная</a>
-    <a class="nav-item nav-link @(controller=="game"?"":"active")" asp-controller="Game" asp-action="Index">Каталог</a>
-    <a class="nav-item nav-link" asp-area="Admin">Администрирование</a>
+    <a class="nav-item nav-link @(controller=="lab"?"":"active")" asp-area="" asp-controller="Lab" asp-action="Index">Лабораторная</a>
+    <a class="nav-item nav-link @(controller=="game"?"":"active")" asp-area="" asp-controller="Games" asp-action="Index">Каталог</a>
+    <a class="nav-item nav-link" asp-area="Admin" asp-page="/Games/Index">Администрирование</a>
 </div>
