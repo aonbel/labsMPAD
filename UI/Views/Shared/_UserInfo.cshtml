@@ -1,31 +1,61 @@
-@using Microsoft.AspNetCore.Mvc.TagHelpers
-@await Component.InvokeAsync("Cart")
+@{ 
+    var name = User 
+        .Claims 
+        .FirstOrDefault(c => c.Type.Equals("preferred_username", 
+            StringComparison.OrdinalIgnoreCase))? 
+        .Value; 
+ 
+    var avatar = User 
+        .Claims 
+        .FirstOrDefault(c => c.Type.Equals("UserAvatarUrl",
+            StringComparison.OrdinalIgnoreCase))? 
+        .Value; 
+    
+    var email = User 
+        .Claims 
+        .FirstOrDefault(c => c.Type.Equals("email", 
+            StringComparison.OrdinalIgnoreCase))? 
+        .Value; 
+} 
 
-<div class="dropdown ms-4 nav-color">
-    <button class="btn btn-secondary dropdown-toggle"
-            type="button" id="dropdownMenuButton"
-            data-bs-toggle="dropdown"
-            aria-expanded="false">
-        User@gmail.com
-        <img src="/images/default-profile-picture.png" width="30"
-             alt="User" class="rounded nav-color"/>
-    </button>
-    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-        <li>
-                    <span class="dropdown-item-text">
-                        <img src="/images/default-profile-picture.png"
-                             width="50" alt="User" class="rounded"/>
-                        User@gmail.com
-                    </span>
-        </li>
-        <li>
-            <hr class="dropdown-divider">
-        </li>
-        <li>
-            <a class="dropdown-item" asp-controller="Cart" asp-action="Index">Корзина</a>
-        </li>
-        <li>
-            <a class="dropdown-item" asp-controller="Account" asp-action="LogOut">Выйти</a>
-        </li>
-    </ul>
-</div>
+@if (User.Identity.IsAuthenticated)
+{
+    @await Component.InvokeAsync("Cart")
+    
+    <div class="dropdown ms-4 nav-color">
+        <button class="btn btn-secondary dropdown-toggle"
+                type="button" id="dropdownMenuButton"
+                data-bs-toggle="dropdown"
+                aria-expanded="false">
+            @name
+            <img src="~/@avatar" width="30"
+                 alt="User avatar" class="rounded nav-color"/>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <li>
+                <span class="dropdown-item-text">
+                    <img src="~/@avatar"
+                         width="50" alt="User avatar" class="rounded"/>
+                    @email
+                </span>
+            </li>
+            <li>
+                <hr class="dropdown-divider">
+            </li>
+            <li>
+                <a class="dropdown-item" asp-controller="Cart" asp-action="Index">Корзина</a>
+            </li>
+            <li>
+                <a class="dropdown-item" asp-controller="Account" asp-action="Logout">Выйти из аккаунта</a>
+            </li>
+        </ul>
+    </div>
+}
+else
+{
+    <div class="navbar-nav d-flex ms-auto">
+        <a class="nav-item nav-link" asp-area="" asp-controller="Account" asp-action="Login">Войти</a>
+        <a class="nav-item nav-link" asp-area="" asp-controller="Account" asp-action="Register">Зарегистрироваться</a>
+    </div>
+}
+

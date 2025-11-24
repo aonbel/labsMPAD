@@ -20,7 +20,8 @@ namespace API.Endpoints
                     return response;
                 })
                 .WithName("GetAllGameGenres")
-                .Produces<ResponseData<List<GameGenre>>>();
+                .Produces<ResponseData<List<GameGenre>>>()
+                .AllowAnonymous();
 
             group.MapGet("/{id:int}", async (int id, ISender sender) =>
                 {
@@ -32,7 +33,8 @@ namespace API.Endpoints
                 })
                 .WithName("GetGameGenre")
                 .Produces<ResponseData<GameGenre>>()
-                .Produces<ResponseData<GameGenre>>(StatusCodes.Status404NotFound);
+                .Produces<ResponseData<GameGenre>>(StatusCodes.Status404NotFound)
+                .AllowAnonymous();
         }
     }
 }

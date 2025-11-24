@@ -24,7 +24,8 @@ namespace API.Endpoints
                 return response;
             })
                 .WithName("GetGameById")
-                .Produces<ResponseData<Game>>();
+                .Produces<ResponseData<Game>>()
+                .AllowAnonymous();
 
             group.MapGet("/", async (ISender sender) =>
                 {
@@ -35,30 +36,33 @@ namespace API.Endpoints
                     return response;
                 })
                 .WithName("GetAllGames")
-                .Produces<ResponseData<List<Game>>>();
+                .Produces<ResponseData<List<Game>>>()
+                .AllowAnonymous();
 
             group.MapGet("/Paginated/",
-                    async (ISender sender, [FromQuery] int? genreId = null, [FromQuery] int page = 1, [FromQuery] int pageSize = 5) =>
+                    async (ISender sender, [FromQuery] int? genreId = null, [FromQuery] int page = 1,
+                        [FromQuery] int pageSize = 5) =>
                     {
                         ResponseData<ListModel<Game>> response;
-                        
+
                         if (genreId is null)
                         {
                             var query = new GetAllGamesPaginatedQuery(page, pageSize);
-                            
+
                             response = await sender.Send(query);
                         }
                         else
                         {
                             var query = new GetGamesByFilterPaginatedQuery(g => g.GenreId == genreId, page, pageSize);
-                            
+
                             response = await sender.Send(query);
                         }
-                            
+
                         return response;
                     })
                 .WithName("GetGamesByGenrePaginated")
-                .Produces<ResponseData<ListModel<Game>>>();
+                .Produces<ResponseData<ListModel<Game>>>()
+                .AllowAnonymous();
 
             group.MapPost("/", async ([FromForm] string gameJson, [FromForm] IFormFile? file, ISender sender) =>
                 {
@@ -80,7 +84,8 @@ namespace API.Endpoints
                     return response;
                 })
                 .WithName("CreateGame")
-                .Produces<ResponseData<Game>>(StatusCodes.Status201Created);
+                .Produces<ResponseData<Game>>(StatusCodes.Status201Created)
+                .RequireAuthorization("admin");
 
             group.MapPut("/", async ([FromForm] string gameJson, [FromForm] IFormFile? file, ISender sender) =>
                 {
@@ -103,7 +108,8 @@ namespace API.Endpoints
                 })
                 .WithName("UpdateGame")
                 .Produces(StatusCodes.Status204NoContent)
-                .Produces<ResponseData<Game>>(StatusCodes.Status404NotFound);
+                .Produces<ResponseData<Game>>(StatusCodes.Status404NotFound)
+                .RequireAuthorization("admin");
 
             group.MapDelete("/{id:int}", async (int id, ISender sender) =>
                 {
@@ -115,7 +121,8 @@ namespace API.Endpoints
                 })
                 .WithName("DeleteGame")
                 .Produces<ResponseData<Game>>()
-                .Produces<ResponseData<Game>>(StatusCodes.Status404NotFound);
+                .Produces<ResponseData<Game>>(StatusCodes.Status404NotFound)
+                .RequireAuthorization("admin");
         }
     }
 }

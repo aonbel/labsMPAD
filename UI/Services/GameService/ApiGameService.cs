@@ -1,9 +1,10 @@
 using System.Text.Json;
 using Domain.Models;
+using UI.Authorization;
 
 namespace UI.Services.GameService;
 
-public class ApiGameService(HttpClient httpClient, IConfiguration _configuration, ILogger<ApiGameService> logger) : IGameService
+public class ApiGameService(HttpClient httpClient, ITokenAccessor tokenAccessor) : IGameService
 {
     private readonly JsonSerializerOptions _serializerOptions = new JsonSerializerOptions
     { 
@@ -12,6 +13,8 @@ public class ApiGameService(HttpClient httpClient, IConfiguration _configuration
 
     public async Task<ResponseData<List<Game>?>> GetAllAsync()
     {
+        await tokenAccessor.SetAuthorizationHeaderAsync(httpClient, false);
+        
         var uriBuilder = new UriBuilder($"{httpClient.BaseAddress?.AbsoluteUri!}");
         
         var uri = uriBuilder.Uri;
@@ -23,6 +26,8 @@ public class ApiGameService(HttpClient httpClient, IConfiguration _configuration
 
     public async Task<ResponseData<ListModel<Game>>> GetByPageAsync(int page = 1, int pageSize = 5)
     {
+        await tokenAccessor.SetAuthorizationHeaderAsync(httpClient, false);
+        
         var uriBuilder = new UriBuilder($"{httpClient.BaseAddress?.AbsoluteUri!}/Paginated")
         {
             Query = $"page={page}&pageSize={pageSize}"
@@ -37,6 +42,8 @@ public class ApiGameService(HttpClient httpClient, IConfiguration _configuration
 
     public async Task<ResponseData<ListModel<Game>>> GetByGenreIdAndPageAsync(int genreId, int page = 1, int pageSize = 5)
     {
+        await tokenAccessor.SetAuthorizationHeaderAsync(httpClient, false);
+        
         var uriBuilder = new UriBuilder($"{httpClient.BaseAddress?.AbsoluteUri!}/Paginated")
         {
             Query = $"genreId={genreId}&page={page}&pageSize={pageSize}"
@@ -51,6 +58,8 @@ public class ApiGameService(HttpClient httpClient, IConfiguration _configuration
 
     public async Task<ResponseData<Game>> GetByIdAsync(int id)
     {
+        await tokenAccessor.SetAuthorizationHeaderAsync(httpClient, false);
+        
         var uriBuilder = new UriBuilder($"{httpClient.BaseAddress?.AbsoluteUri!}/{id}");
         
         var uri = uriBuilder.Uri;
@@ -62,6 +71,8 @@ public class ApiGameService(HttpClient httpClient, IConfiguration _configuration
 
     public async Task UpdateAsync(Game game, IFormFile? file)
     {
+        await tokenAccessor.SetAuthorizationHeaderAsync(httpClient, false);
+        
         game.ImagePath = "images/noimage.png";
         
         var uriBuilder = new UriBuilder($"{httpClient.BaseAddress?.AbsoluteUri!}/");
@@ -88,6 +99,8 @@ public class ApiGameService(HttpClient httpClient, IConfiguration _configuration
 
     public async Task DeleteAsync(int id)
     {
+        await tokenAccessor.SetAuthorizationHeaderAsync(httpClient, false);
+        
         var uriBuilder = new UriBuilder($"{httpClient.BaseAddress?.AbsoluteUri!}/{id}");
         
         var uri = uriBuilder.Uri;
@@ -97,6 +110,8 @@ public class ApiGameService(HttpClient httpClient, IConfiguration _configuration
 
     public async Task CreateAsync(Game game, IFormFile? file)
     {
+        await tokenAccessor.SetAuthorizationHeaderAsync(httpClient, false);
+        
         game.ImagePath = "images/noimage.png";
         
         var uriBuilder = new UriBuilder($"{httpClient.BaseAddress?.AbsoluteUri!}/");
