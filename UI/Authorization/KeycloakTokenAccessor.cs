@@ -25,7 +25,7 @@ internal class KeycloakTokenAccessor(
         var authSession = await context.AuthenticateAsync("keycloak");
         if (authSession.Principal == null)
         {
-            throw new AuthenticationFailureException("User not authenticated");
+            return "not authorized";
         }
         return await context.GetTokenAsync("keycloak", "access_token");
     }

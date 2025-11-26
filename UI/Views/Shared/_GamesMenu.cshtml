@@ -1,0 +1,78 @@
+@{
+    var request = ViewContext.HttpContext.Request;
+    var returnUrl = request.Path + request.QueryString.ToUriComponent();
+    var gameGenre = request.Query["gameGenreId"].ToString();
+}
+
+<style>
+    .game-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        border: none;
+        border-radius: 12px;
+    }
+
+    .game-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .card-img-container {
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+    }
+
+    .object-fit-cover {
+        object-fit: cover;
+    }
+</style>
+
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
+    @foreach (var item in Model.Items)
+    {
+        <div class="col">
+            <div class="card h-100 shadow-sm game-card">
+                <div class="card-img-container" style="height: 200px; overflow: hidden;">
+                    @if (!string.IsNullOrEmpty(item.ImagePath))
+                    {
+                        <img src="@item.ImagePath" alt="@item.Name"
+                             class="card-img-top h-100 object-fit-cover"
+                             style="object-fit: cover; width: 100%;">
+                    }
+                    else
+                    {
+                        <div class="bg-secondary d-flex align-items-center justify-content-center h-100">
+                            <span class="text-white">No image</span>
+                        </div>
+                    }
+                </div>
+
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title text-truncate">@item.Name</h5>
+
+                    <p class="card-text flex-grow-1"
+                       style="max-height: 60px; overflow: hidden; text-overflow: ellipsis;">
+                        @item.Description
+                    </p>
+
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="badge bg-primary">Genre: @item.GenreId</span>
+                        <span class="h5 text-success mb-0">$@item.Price</span>
+                    </div>
+
+                    <a asp-action="Add" asp-controller="Cart"
+                       asp-route-gameId="@item.Id"
+                       asp-route-returnUrl="@returnUrl"
+                       class="btn btn-primary w-100">
+                        <i class="fas fa-shopping-cart"></i> Add to cart
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<pager total-pages="@Model.TotalPages"
+       current-page="@Model.CurrentPage"
+       game-genre-id="@gameGenre">
+</pager>
+

@@ -1,5 +1,6 @@
 using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
+using UI.Extensions;
 
 namespace UI.Controllers;
 
@@ -55,6 +56,11 @@ public class GamesController(
         }
 
         var games = gamesResponse.Data!;
+
+        if (Request.IsAjaxRequest())
+        {
+            return PartialView("_GamesMenu", games);
+        }
 
         return View(games);
     }
