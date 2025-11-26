@@ -1,9 +1,9 @@
 using System.Reflection;
-using Microsoft.EntityFrameworkCore;
-using API.Endpoints;
 using API.Data;
+using API.Endpoints;
 using API.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,12 +13,10 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddSwaggerGen();   
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
-builder.Services.AddMediatR(cfg =>
-{
-    cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
-});
+builder.Services.AddMediatR(cfg => { cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()); });
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, o =>
@@ -26,7 +24,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         var authServer = builder.Configuration
             .GetSection("AuthServer")
             .Get<AuthServerData>();
-        
+
         o.MetadataAddress = $"{authServer.Host}/realms/{authServer.Realm}/.well-known/openid-configuration";
         o.Authority = $"{authServer.Host}/realms/{authServer.Realm}";
         o.Audience = "account";
@@ -35,6 +33,15 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorizationBuilder()
     .AddPolicy("admin", policy => policy.RequireRole("POWER-USER"));
+
+builder.Services.AddHybridCache();
+builder.Services.AddStackExchangeRedisCache(opt =>
+{
+    opt.InstanceName = "labs_";
+    opt.Configuration = builder
+        .Configuration
+        .GetConnectionString("Redis");
+});
 
 var connectionString = builder.Configuration.GetConnectionString("Postgres");
 
@@ -50,10 +57,7 @@ using (var scope = app.Services.CreateScope())
 
 await app.SeedData();
 
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
+if (app.Environment.IsDevelopment()) app.MapOpenApi();
 
 app.UseSwagger();
 app.UseSwaggerUI();

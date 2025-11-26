@@ -23,10 +23,7 @@ internal class KeycloakTokenAccessor(
     {
         var context = contextAccessor.HttpContext;
         var authSession = await context.AuthenticateAsync("keycloak");
-        if (authSession.Principal == null)
-        {
-            return "not authorized";
-        }
+        if (authSession.Principal == null) return "not authorized";
         return await context.GetTokenAsync("keycloak", "access_token");
     }
 
@@ -37,20 +34,17 @@ internal class KeycloakTokenAccessor(
             $"{options.Value.Host}/realms/{options.Value.Realm}/protocol/openid-connect/token";
 // Http request content
         HttpContent content = new FormUrlEncodedContent([
-            new KeyValuePair<string,string>
-                ("client_id",options.Value.ClientId),
-            new KeyValuePair<string,string>
-                ("grant_type","client_credentials"),
-            new KeyValuePair<string,string>
-                ("client_secret",options.Value.ClientSecret)
+            new KeyValuePair<string, string>
+                ("client_id", options.Value.ClientId),
+            new KeyValuePair<string, string>
+                ("grant_type", "client_credentials"),
+            new KeyValuePair<string, string>
+                ("client_secret", options.Value.ClientSecret)
         ]);
 // send request
         var response = await httpClient.PostAsync(requestUri, content);
-        if (!response.IsSuccessStatusCode)
-        {
-            throw new HttpRequestException(response.StatusCode.ToString());
-        }
-// extract access token from response
+        if (!response.IsSuccessStatusCode) throw new HttpRequestException(response.StatusCode.ToString());
+        // extract access token from response
         var jsonString = await response.Content.ReadAsStringAsync();
         return JsonObject.Parse(jsonString)["access_token"].GetValue<string>();
     }

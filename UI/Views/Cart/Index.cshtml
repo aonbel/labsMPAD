@@ -1,0 +1,81 @@
+@model Cart
+
+@{
+    ViewData["Title"] = "Cart";
+    Layout = "_Layout";
+    var currentUrl = Context.Request.Path.Value;
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Корзина</h2>
+
+    @if (Model.CartGames.Count == 0)
+    {
+        <div class="alert alert-info text-center">
+            <h4>Корзина пуста</h4>
+            <p class="mb-0">ИДИ КУПИ ЧЕНИТЬ!</p>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-md-8">
+                @foreach (var cartItem in Model.CartGames.Values)
+                {
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <img src="@cartItem.Game.ImagePath" class="img-fluid rounded"
+                                         alt="@cartItem.Game.Name">
+                                </div>
+                                <div class="col-md-6">
+                                    <h5 class="card-title">@cartItem.Game.Name</h5>
+                                    <p class="card-text text-muted">@cartItem.Game.Description</p>
+                                    <p class="card-text">
+                                        <strong>@cartItem.Game.Price руб.</strong>
+                                    </p>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge bg-secondary fs-6">Количество: @cartItem.Quantity</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <form asp-controller="Cart" asp-action="Remove" asp-route-returnUrl="@currentUrl"
+                                          method="post">
+                                        <input type="hidden" name="gameId" value="@cartItem.Game.Id"/>
+                                        <button type="submit" class="btn btn-danger btn-sm">
+                                            <i class="bi bi-trash"></i> Удалить
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Оплата:</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-3">
+                            <span><strong>Итого(@Model.Quantity предметов):</strong></span>
+                            <strong>@Model.Price руб.</strong>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-primary btn-lg">Оплатить</button>
+                            <form asp-controller="Cart" asp-action="Clear" asp-route-returnUrl="@currentUrl"
+                                  method="post">
+                                <button type="submit" class="btn btn-outline-secondary w-100">Очистить корзину</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

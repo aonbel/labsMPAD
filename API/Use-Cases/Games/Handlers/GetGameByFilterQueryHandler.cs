@@ -7,9 +7,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Use_Cases.Games.Handlers;
 
-public sealed class GetGameByFilterQueryHandler(AppDbContext context) : IRequestHandler<GetGamesByFilterQuery, ResponseData<List<Game>>>
+public sealed class GetGameByFilterQueryHandler(AppDbContext context)
+    : IRequestHandler<GetGamesByFilterQuery, ResponseData<List<Game>>>
 {
-    public async Task<ResponseData<List<Game>>> Handle(GetGamesByFilterQuery request, CancellationToken cancellationToken)
+    public async Task<ResponseData<List<Game>>> Handle(GetGamesByFilterQuery request,
+        CancellationToken cancellationToken)
     {
         var filteredGames = await context.Games.Where(request.Filter).ToListAsync(cancellationToken);
 

@@ -15,15 +15,12 @@ public class SaveImageCommandHandler(IWebHostEnvironment webHostEnvironment, ICo
 
         while (true)
         {
-            if (!File.Exists($"{imagesPath}/{imageName}.{imageExtension}"))
-            {
-                break;
-            }
+            if (!File.Exists($"{imagesPath}/{imageName}.{imageExtension}")) break;
             imageName = Guid.NewGuid().ToString();
         }
-        
+
         var imagePath = $"{imagesPath}/{imageName}.{imageExtension}";
-        
+
         var urlOfApiApplication = configuration["ApplicationUrl"];
 
         await using (var fileStream = new FileStream(imagePath, FileMode.Create))

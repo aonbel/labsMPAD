@@ -1,48 +1,35 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 
-namespace UI.Areas.Admin.Views.Games
+namespace UI.Areas.Admin.Views.Games;
+
+public class DeleteModel(IGameService gameService) : PageModel
 {
-    public class DeleteModel(IGameService gameService) : PageModel
+    [BindProperty] public Game Game { get; set; } = default!;
+
+    public async Task<IActionResult> OnGetAsync(int? id)
     {
-        [BindProperty]
-        public Game Game { get; set; } = default!;
+        if (id == null) return NotFound();
 
-        public async Task<IActionResult> OnGetAsync(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-            
-            var game = await gameService.GetByIdAsync(id.Value);
+        var game = await gameService.GetByIdAsync(id.Value);
 
-            if (!game.Successful) return NotFound(game.ErrorMessage ?? string.Empty);
-            
-            Game = game.Data!;
-                
-            return Page();
+        if (!game.Successful) return NotFound(game.ErrorMessage ?? string.Empty);
 
-        }
+        Game = game.Data!;
 
-        public async Task<IActionResult> OnPostAsync(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+        return Page();
+    }
 
-            var gameGetResponse = await gameService.GetByIdAsync(id.Value);
-            
-            if (!gameGetResponse.Successful)
-            {
-                return NotFound(gameGetResponse.ErrorMessage ?? string.Empty);
-            }
-            
-            await gameService.DeleteAsync((int)id);
+    public async Task<IActionResult> OnPostAsync(int? id)
+    {
+        if (id == null) return NotFound();
 
-            return RedirectToPage("./Index");
-        }
+        var gameGetResponse = await gameService.GetByIdAsync(id.Value);
+
+        if (!gameGetResponse.Successful) return NotFound(gameGetResponse.ErrorMessage ?? string.Empty);
+
+        await gameService.DeleteAsync((int)id);
+
+        return RedirectToPage("./Index");
     }
 }

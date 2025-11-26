@@ -1,5 +1,4 @@
-﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -16,7 +15,7 @@
          data-bs-theme="light">
         <partial name="_MenuLayout"/>
         <partial name="_UserInfo"/>
-    </nav>  
+    </nav>
 </header>
 
 <div class="container">
@@ -47,6 +46,6 @@
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>
-@await RenderSectionAsync("Scripts", required: false)
+@await RenderSectionAsync("Scripts", false)
 </body>
 </html>

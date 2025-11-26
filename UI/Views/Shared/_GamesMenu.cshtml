@@ -1,7 +1,8 @@
 @{
     var request = ViewContext.HttpContext.Request;
     var returnUrl = request.Path + request.QueryString.ToUriComponent();
-    var gameGenre = request.Query["gameGenreId"].ToString();
+    var currentGameGenre = ViewBag.CurrentGameGenre as GameGenre;
+    var gameGenreId = currentGameGenre?.Id;
 }
 
 <style>
@@ -41,7 +42,7 @@
                     else
                     {
                         <div class="bg-secondary d-flex align-items-center justify-content-center h-100">
-                            <span class="text-white">No image</span>
+                            <span class="text-white">Без картинки</span>
                         </div>
                     }
                 </div>
@@ -55,15 +56,15 @@
                     </p>
 
                     <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="badge bg-primary">Genre: @item.GenreId</span>
-                        <span class="h5 text-success mb-0">$@item.Price</span>
+                        <span class="badge bg-primary">Жанр: @item.GenreId</span>
+                        <span class="h5 text-success mb-0">@item.Price руб.</span>
                     </div>
 
                     <a asp-action="Add" asp-controller="Cart"
                        asp-route-gameId="@item.Id"
                        asp-route-returnUrl="@returnUrl"
                        class="btn btn-primary w-100">
-                        <i class="fas fa-shopping-cart"></i> Add to cart
+                        <i class="fas fa-shopping-cart"></i> Добавить в корзину
                     </a>
                 </div>
             </div>
@@ -73,6 +74,6 @@
 
 <pager total-pages="@Model.TotalPages"
        current-page="@Model.CurrentPage"
-       game-genre-id="@gameGenre">
+       game-genre-id="@gameGenreId">
 </pager>
 

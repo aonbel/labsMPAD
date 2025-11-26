@@ -1,4 +1,4 @@
-@model UI.Models.RegisterUserViewModel
+@model RegisterUserViewModel
 
 @{
     ViewData["Title"] = "Register";
@@ -10,33 +10,33 @@
 <form asp-controller="Account" asp-action="Register" enctype="multipart/form-data">
     <div class="form-group">
         <label asp-for="Email" class="control-label"></label>
-        <input asp-for="Email" class="form-control" />
+        <input asp-for="Email" class="form-control"/>
         <span asp-validation-for="Email" class="text-danger"></span>
     </div>
-    
+
     <div class="form-group">
         <label asp-for="Password" class="control-label"></label>
-        <input asp-for="Password" type="password" class="form-control" />
+        <input asp-for="Password" type="password" class="form-control"/>
         <span asp-validation-for="Password" class="text-danger"></span>
     </div>
-    
+
     <div class="form-group">
         <label asp-for="ConfirmPassword" class="control-label"></label>
-        <input asp-for="ConfirmPassword" type="password" class="form-control" />
+        <input asp-for="ConfirmPassword" type="password" class="form-control"/>
         <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
     </div>
-    
+
     <div class="form-group">
         <label asp-for="ProfilePicture" class="control-label"></label>
-        <input asp-for="ProfilePicture" type="file" class="form-control" />
+        <input asp-for="ProfilePicture" type="file" class="form-control"/>
         <span asp-validation-for="ProfilePicture" class="text-danger"></span>
     </div>
-    
+
     <div class="form-group">
-        <input type="submit" value="Register" class="btn btn-primary" />
+        <input type="submit" value="Register" class="btn btn-primary"/>
     </div>
 </form>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 }

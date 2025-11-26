@@ -1,27 +1,27 @@
-@{ 
-    var name = User 
-        .Claims 
-        .FirstOrDefault(c => c.Type.Equals("preferred_username", 
-            StringComparison.OrdinalIgnoreCase))? 
-        .Value; 
- 
-    var avatar = User 
-        .Claims 
+@{
+    var name = User
+        .Claims
+        .FirstOrDefault(c => c.Type.Equals("preferred_username",
+            StringComparison.OrdinalIgnoreCase))?
+        .Value;
+
+    var avatar = User
+        .Claims
         .FirstOrDefault(c => c.Type.Equals("UserAvatarUrl",
-            StringComparison.OrdinalIgnoreCase))? 
-        .Value; 
-    
-    var email = User 
-        .Claims 
-        .FirstOrDefault(c => c.Type.Equals("email", 
-            StringComparison.OrdinalIgnoreCase))? 
-        .Value; 
-} 
+            StringComparison.OrdinalIgnoreCase))?
+        .Value;
+
+    var email = User
+        .Claims
+        .FirstOrDefault(c => c.Type.Equals("email",
+            StringComparison.OrdinalIgnoreCase))?
+        .Value;
+}
 
 @if (User.Identity.IsAuthenticated)
 {
     @await Component.InvokeAsync("Cart")
-    
+
     <div class="dropdown ms-4 nav-color">
         <button class="btn btn-secondary dropdown-toggle"
                 type="button" id="dropdownMenuButton"

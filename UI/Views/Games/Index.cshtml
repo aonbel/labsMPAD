@@ -5,14 +5,14 @@
     Layout = "_Layout";
 }
 
-<h1 class="my-4">Games Catalog</h1>
+<h1 class="my-4">Каталог игр</h1>
 
 <div class="dropdown mb-4">
     <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
         @if (ViewBag.CurrentGameGenre is null)
         {
-            @:All Games
-        }   
+            @:Все игры
+        }
         else
         {
             @ViewBag.CurrentGameGenre.Name
@@ -24,7 +24,7 @@
             <a class="dropdown-item"
                asp-controller="Games"
                asp-action="Index"
-               asp-route-gameGenreId="@null">All Games</a>
+               asp-route-gameGenreId="@null">Все игры</a>
         </li>
         @foreach (var item in ViewBag.GameGenres)
         {

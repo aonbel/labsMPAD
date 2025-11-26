@@ -2,5 +2,5 @@ namespace UI;
 
 public class UriData
 {
-    public string ApiUri { get; set; } = String.Empty;
+    public string ApiUri { get; set; } = string.Empty;
 }

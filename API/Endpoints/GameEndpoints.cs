@@ -6,123 +6,131 @@ using Domain.Entities;
 using Domain.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Hybrid;
 
-namespace API.Endpoints
+namespace API.Endpoints;
+
+public static class GameEndpoints
 {
-    public static class GameEndpoints
+    public static void MapGameEndpoints(this IEndpointRouteBuilder routes)
     {
-        public static void MapGameEndpoints(this IEndpointRouteBuilder routes)
-        {
-            var group = routes.MapGroup("/api/Games").WithTags(nameof(Game)).DisableAntiforgery();
+        var group = routes.MapGroup("/api/Games").WithTags(nameof(Game)).DisableAntiforgery();
 
-            group.MapGet("/{id:int}", async (int id, ISender sender) =>
+        group.MapGet("/{id:int}", async (int id, ISender sender) =>
             {
                 var query = new GetGameByIdQuery(id);
-                
+
                 var response = await sender.Send(query);
-                
+
                 return response;
             })
-                .WithName("GetGameById")
-                .Produces<ResponseData<Game>>()
-                .AllowAnonymous();
+            .WithName("GetGameById")
+            .Produces<ResponseData<Game>>()
+            .AllowAnonymous();
 
-            group.MapGet("/", async (ISender sender) =>
+        group.MapGet("/", async (ISender sender) =>
+            {
+                var query = new GetAllGamesQuery();
+
+                var response = await sender.Send(query);
+
+                return response;
+            })
+            .WithName("GetAllGames")
+            .Produces<ResponseData<List<Game>>>()
+            .AllowAnonymous();
+
+        group.MapGet("/Paginated/",
+                async (ISender sender, HybridCache hybridCache, [FromQuery] int? genreId = null,
+                    [FromQuery] int page = 1,
+                    [FromQuery] int pageSize = 5) =>
                 {
-                    var query = new GetAllGamesQuery();
+                    ResponseData<ListModel<Game>> response;
 
-                    var response = await sender.Send(query);
+                    if (genreId is null)
+                        response =
+                            await hybridCache.GetOrCreateAsync($"dishes_{page}_{pageSize}",
+                                async _ => await sender.Send(new GetAllGamesPaginatedQuery(page, pageSize)),
+                                new HybridCacheEntryOptions
+                                {
+                                    Expiration = TimeSpan.FromMinutes(1),
+                                    LocalCacheExpiration = TimeSpan.FromSeconds(30)
+                                });
+                    else
+                        response =
+                            await hybridCache.GetOrCreateAsync($"dishes_{genreId}_{page}_{pageSize}",
+                                async _ => await sender.Send(
+                                    new GetGamesByFilterPaginatedQuery(g => g.GenreId == genreId, page, pageSize)),
+                                new HybridCacheEntryOptions
+                                {
+                                    Expiration = TimeSpan.FromMinutes(1),
+                                    LocalCacheExpiration = TimeSpan.FromSeconds(30)
+                                });
 
                     return response;
                 })
-                .WithName("GetAllGames")
-                .Produces<ResponseData<List<Game>>>()
-                .AllowAnonymous();
+            .WithName("GetGamesByGenrePaginated")
+            .Produces<ResponseData<ListModel<Game>>>()
+            .AllowAnonymous();
 
-            group.MapGet("/Paginated/",
-                    async (ISender sender, [FromQuery] int? genreId = null, [FromQuery] int page = 1,
-                        [FromQuery] int pageSize = 5) =>
-                    {
-                        ResponseData<ListModel<Game>> response;
+        group.MapPost("/", async ([FromForm] string gameJson, IFormFile? file, ISender sender) =>
+            {
+                var game = JsonSerializer.Deserialize<Game>(gameJson)!;
 
-                        if (genreId is null)
-                        {
-                            var query = new GetAllGamesPaginatedQuery(page, pageSize);
-
-                            response = await sender.Send(query);
-                        }
-                        else
-                        {
-                            var query = new GetGamesByFilterPaginatedQuery(g => g.GenreId == genreId, page, pageSize);
-
-                            response = await sender.Send(query);
-                        }
-
-                        return response;
-                    })
-                .WithName("GetGamesByGenrePaginated")
-                .Produces<ResponseData<ListModel<Game>>>()
-                .AllowAnonymous();
-
-            group.MapPost("/", async ([FromForm] string gameJson, [FromForm] IFormFile? file, ISender sender) =>
+                if (file is not null)
                 {
-                    var game = JsonSerializer.Deserialize<Game>(gameJson)!;
-                    
-                    if (file is not null)
-                    {
-                        var saveImageCommand = new SaveImageCommand(file);
-                        
-                        var saveImageCommandResponse = await sender.Send(saveImageCommand);
-                        
-                        game.ImagePath = saveImageCommandResponse.Data!;
-                    }
-                    
-                    var query = new CreateGameCommand(game);
+                    var saveImageCommand = new SaveImageCommand(file);
 
-                    var response = await sender.Send(query);
+                    var saveImageCommandResponse = await sender.Send(saveImageCommand);
 
-                    return response;
-                })
-                .WithName("CreateGame")
-                .Produces<ResponseData<Game>>(StatusCodes.Status201Created)
-                .RequireAuthorization("admin");
+                    game.ImagePath = saveImageCommandResponse.Data!;
+                }
 
-            group.MapPut("/", async ([FromForm] string gameJson, [FromForm] IFormFile? file, ISender sender) =>
+                var query = new CreateGameCommand(game);
+
+                var response = await sender.Send(query);
+
+                return response;
+            })
+            .WithName("CreateGame")
+            .Produces<ResponseData<Game>>(StatusCodes.Status201Created)
+            .RequireAuthorization("admin");
+
+        group.MapPut("/", async ([FromForm] string gameJson, IFormFile? file, ISender sender) =>
+            {
+                var game = JsonSerializer.Deserialize<Game>(gameJson)!;
+
+                if (file is not null)
                 {
-                    var game = JsonSerializer.Deserialize<Game>(gameJson)!;
-                    
-                    if (file is not null)
-                    {
-                        var saveImageCommand = new SaveImageCommand(file);
-                        
-                        var saveImageCommandResponse = await sender.Send(saveImageCommand);
-                        
-                        game.ImagePath = saveImageCommandResponse.Data!;
-                    }
-                    
-                    var query = new UpdateGameByIdCommand(game);
+                    var saveImageCommand = new SaveImageCommand(file);
 
-                    var response = await sender.Send(query);
+                    var saveImageCommandResponse = await sender.Send(saveImageCommand);
 
-                    return response;
-                })
-                .WithName("UpdateGame")
-                .Produces(StatusCodes.Status204NoContent)
-                .Produces<ResponseData<Game>>(StatusCodes.Status404NotFound)
-                .RequireAuthorization("admin");
+                    game.ImagePath = saveImageCommandResponse.Data!;
+                }
 
-            group.MapDelete("/{id:int}", async (int id, ISender sender) =>
-                {
-                    var query = new DeleteGameByIdCommand(id);
+                var query = new UpdateGameByIdCommand(game);
 
-                    var response = await sender.Send(query);
+                var response = await sender.Send(query);
 
-                    return response;
-                })
-                .WithName("DeleteGame")
-                .Produces<ResponseData<Game>>()
-                .Produces<ResponseData<Game>>(StatusCodes.Status404NotFound)
-                .RequireAuthorization("admin");
-        }
+                return response;
+            })
+            .WithName("UpdateGame")
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces<ResponseData<Game>>(StatusCodes.Status404NotFound)
+            .RequireAuthorization("admin");
+
+        group.MapDelete("/{id:int}", async (int id, ISender sender) =>
+            {
+                var query = new DeleteGameByIdCommand(id);
+
+                var response = await sender.Send(query);
+
+                return response;
+            })
+            .WithName("DeleteGame")
+            .Produces<ResponseData<Game>>()
+            .Produces<ResponseData<Game>>(StatusCodes.Status404NotFound)
+            .RequireAuthorization("admin");
     }
 }

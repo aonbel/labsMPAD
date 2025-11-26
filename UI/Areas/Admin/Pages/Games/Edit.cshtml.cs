@@ -1,46 +1,33 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 
-namespace UI.Areas.Admin.Views.Games
+namespace UI.Areas.Admin.Views.Games;
+
+public class EditModel(IGameService gameService) : PageModel
 {
-    public class EditModel(IGameService gameService) : PageModel
+    [BindProperty] public Game Game { get; set; } = default!;
+
+    [BindProperty] public IFormFile? ImageFile { get; set; } = default!;
+
+    public async Task<IActionResult> OnGetAsync(int? id)
     {
-        [BindProperty]
-        public Game Game { get; set; } = default!;
-        
-        [BindProperty]
-        public IFormFile? ImageFile { get; set; } = default!;
+        if (id == null) return NotFound();
 
-        public async Task<IActionResult> OnGetAsync(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-            
-            var gameGetResponse = await gameService.GetByIdAsync(id.Value);
+        var gameGetResponse = await gameService.GetByIdAsync(id.Value);
 
-            if (!gameGetResponse.Successful)
-            {
-                return NotFound(gameGetResponse.ErrorMessage ?? string.Empty);
-            }
+        if (!gameGetResponse.Successful) return NotFound(gameGetResponse.ErrorMessage ?? string.Empty);
 
-            Game = gameGetResponse.Data!;
-            
-            return Page();
-        }
+        Game = gameGetResponse.Data!;
 
-        public async Task<IActionResult> OnPostAsync()
-        {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
+        return Page();
+    }
 
-            await gameService.UpdateAsync(Game, ImageFile);
+    public async Task<IActionResult> OnPostAsync()
+    {
+        if (!ModelState.IsValid) return Page();
 
-            return RedirectToPage("./Index");
-        }
+        await gameService.UpdateAsync(Game, ImageFile);
+
+        return RedirectToPage("./Index");
     }
 }

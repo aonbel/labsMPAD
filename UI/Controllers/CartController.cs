@@ -2,16 +2,38 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace UI.Controllers;
 
-public class CartController : Controller
+public class CartController(IGameService gameService, Cart cart) : Controller
 {
     // GET
     public IActionResult Index()
     {
-        return View();
+        return View(cart);
     }
 
-    public IActionResult Add(int gameId, string? returnUrl)
+    public async Task<IActionResult> AddAsync(int gameId, string? returnUrl)
     {
-        return View();
+        var getByIdResponse = await gameService.GetByIdAsync(gameId);
+
+        if (!getByIdResponse.Successful) return BadRequest(getByIdResponse.ErrorMessage);
+
+        var game = getByIdResponse.Data!;
+
+        cart.AddToCart(game);
+
+        return LocalRedirect(returnUrl ?? "/");
+    }
+
+    public IActionResult Remove(int gameId, string? returnUrl)
+    {
+        cart.RemoveFromCart(gameId);
+
+        return LocalRedirect(returnUrl ?? "/");
+    }
+
+    public IActionResult Clear(string? returnUrl)
+    {
+        cart.ClearCart();
+
+        return LocalRedirect(returnUrl ?? "/");
     }
 }

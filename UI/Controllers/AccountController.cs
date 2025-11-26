@@ -10,9 +10,13 @@ using UI.Services;
 
 namespace UI.Controllers;
 
-public class AccountController(HttpClient httpClient, IFileService fileService, ITokenAccessor tokenAccessor, IHttpContextAccessor httpContextAccessor, IOptions<KeycloakData> options) : Controller
+public class AccountController(
+    HttpClient httpClient,
+    IFileService fileService,
+    ITokenAccessor tokenAccessor,
+    IHttpContextAccessor httpContextAccessor,
+    IOptions<KeycloakData> options) : Controller
 {
-    
     public IActionResult Register()
     {
         return View(new RegisterUserViewModel());
@@ -22,10 +26,7 @@ public class AccountController(HttpClient httpClient, IFileService fileService, 
     [AutoValidateAntiforgeryToken]
     public async Task<IActionResult> RegisterAsync(RegisterUserViewModel model)
     {
-        if (!ModelState.IsValid)
-        {
-            return View(model);
-        }
+        if (!ModelState.IsValid) return View(model);
 
         await tokenAccessor.SetAuthorizationHeaderAsync(httpClient, true);
 
@@ -34,17 +35,14 @@ public class AccountController(HttpClient httpClient, IFileService fileService, 
         var uri = uriBuilder.Uri;
         var profilePictureUrl = "images/default-profile-picture.png";
 
-        if (model.ProfilePicture is not null)
-        {
-            profilePictureUrl = await fileService.SaveFileAsync(model.ProfilePicture);
-        }
+        if (model.ProfilePicture is not null) profilePictureUrl = await fileService.SaveFileAsync(model.ProfilePicture);
 
         var createUserModel = new CreateUserModel
         {
             Email = model.Email,
             Username = model.Email
         };
-        
+
         createUserModel.Attributes.Add("UserAvatarUrl", profilePictureUrl);
         createUserModel.Credentials.Add(new UserCredentials
         {
@@ -61,29 +59,30 @@ public class AccountController(HttpClient httpClient, IFileService fileService, 
 
         var response = await httpClient.PostAsync(uri, content);
 
-        if (!response.IsSuccessStatusCode)
-        {
-            return BadRequest(response.StatusCode);
-        }
+        if (!response.IsSuccessStatusCode) return BadRequest(response.StatusCode);
 
         return LocalRedirect("/Home/Index");
     }
 
     public async Task Login()
     {
-        await HttpContext.ChallengeAsync( 
-            "keycloak", 
-            new AuthenticationProperties { RedirectUri = Url.Action("Index", "Home") 
-            }); 
+        await HttpContext.ChallengeAsync(
+            "keycloak",
+            new AuthenticationProperties
+            {
+                RedirectUri = Url.Action("Index", "Home")
+            });
     }
-    
+
     public async Task Logout()
     {
-        await 
-            HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme); 
-        await HttpContext.SignOutAsync("keycloak", 
-            new AuthenticationProperties { RedirectUri = Url.Action("Index", "Home") 
-            }); 
+        await
+            HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        await HttpContext.SignOutAsync("keycloak",
+            new AuthenticationProperties
+            {
+                RedirectUri = Url.Action("Index", "Home")
+            });
     }
 }
 

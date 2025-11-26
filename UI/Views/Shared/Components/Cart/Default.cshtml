@@ -1,5 +1,5 @@
-@model UI.Models.CartViewModel;
+@model CartViewModel;
 
-<a href="#" class="navbar-text ms-auto">
+<a asp-controller="Cart" asp-action="Index" class="navbar-text ms-auto">
     @Model.TotalAmount.ToString("N1") руб <i class="bi bi-cart"></i> (@Model.ItemsCount)
 </a>

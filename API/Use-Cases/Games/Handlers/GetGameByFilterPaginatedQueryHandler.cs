@@ -19,7 +19,7 @@ public sealed class GetGameByFilterPaginatedQueryHandler(AppDbContext appDbConte
             .Skip((request.PageNumber - 1) * request.PageSize)
             .Take(request.PageSize)
             .ToListAsync(cancellationToken);
-        
+
         return ResponseData<ListModel<Game>>.Success(new ListModel<Game>
         {
             Items = pageItems,
