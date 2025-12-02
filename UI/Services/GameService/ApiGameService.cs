@@ -24,39 +24,6 @@ public class ApiGameService(HttpClient httpClient, ITokenAccessor tokenAccessor)
         return (await response.Content.ReadFromJsonAsync<ResponseData<List<Game>>>(_serializerOptions))!;
     }
 
-    public async Task<ResponseData<ListModel<Game>>> GetByPageAsync(int page = 1, int pageSize = 5)
-    {
-        await tokenAccessor.SetAuthorizationHeaderAsync(httpClient, false);
-
-        var uriBuilder = new UriBuilder($"{httpClient.BaseAddress?.AbsoluteUri!}/Paginated")
-        {
-            Query = $"page={page}&pageSize={pageSize}"
-        };
-
-        var uri = uriBuilder.Uri;
-
-        var response = await httpClient.GetAsync(uri);
-
-        return (await response.Content.ReadFromJsonAsync<ResponseData<ListModel<Game>>>(_serializerOptions))!;
-    }
-
-    public async Task<ResponseData<ListModel<Game>>> GetByGenreIdAndPageAsync(int genreId, int page = 1,
-        int pageSize = 5)
-    {
-        await tokenAccessor.SetAuthorizationHeaderAsync(httpClient, false);
-
-        var uriBuilder = new UriBuilder($"{httpClient.BaseAddress?.AbsoluteUri!}/Paginated")
-        {
-            Query = $"genreId={genreId}&page={page}&pageSize={pageSize}"
-        };
-
-        var uri = uriBuilder.Uri;
-
-        var response = await httpClient.GetAsync(uri);
-
-        return (await response.Content.ReadFromJsonAsync<ResponseData<ListModel<Game>>>(_serializerOptions))!;
-    }
-
     public async Task<ResponseData<Game>> GetByIdAsync(int id)
     {
         await tokenAccessor.SetAuthorizationHeaderAsync(httpClient, false);
@@ -136,5 +103,37 @@ public class ApiGameService(HttpClient httpClient, ITokenAccessor tokenAccessor)
 
         request.Content = multipartFormDataContent;
         await httpClient.SendAsync(request);
+    }
+
+    public async Task<ResponseData<ListModel<Game>>> GetByPageAsync(int pageSize, int page = 1)
+    {
+        await tokenAccessor.SetAuthorizationHeaderAsync(httpClient, false);
+
+        var uriBuilder = new UriBuilder($"{httpClient.BaseAddress?.AbsoluteUri!}/Paginated")
+        {
+            Query = $"page={page}&pageSize={pageSize}"
+        };
+
+        var uri = uriBuilder.Uri;
+
+        var response = await httpClient.GetAsync(uri);
+
+        return (await response.Content.ReadFromJsonAsync<ResponseData<ListModel<Game>>>(_serializerOptions))!;
+    }
+
+    public async Task<ResponseData<ListModel<Game>>> GetByGenreIdAndPageAsync(int genreId, int pageSize, int page = 1)
+    {
+        await tokenAccessor.SetAuthorizationHeaderAsync(httpClient, false);
+
+        var uriBuilder = new UriBuilder($"{httpClient.BaseAddress?.AbsoluteUri!}/Paginated")
+        {
+            Query = $"genreId={genreId}&page={page}&pageSize={pageSize}"
+        };
+
+        var uri = uriBuilder.Uri;
+
+        var response = await httpClient.GetAsync(uri);
+
+        return (await response.Content.ReadFromJsonAsync<ResponseData<ListModel<Game>>>(_serializerOptions))!;
     }
 }

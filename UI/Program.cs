@@ -38,7 +38,7 @@ builder.Services.AddAuthorizationBuilder()
     .AddPolicy("admin", p => p.RequireRole("POWER-USER"));
 
 builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSession();
+builder.Services.AddSession(options => { options.IdleTimeout = TimeSpan.FromSeconds(5); });
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();

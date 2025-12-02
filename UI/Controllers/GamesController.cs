@@ -36,12 +36,12 @@ public class GamesController(
         ResponseData<ListModel<Game>> gamesResponse;
 
         var itemsPerPage =
-            int.Parse(configuration["Application:ItemsPerPage"] ?? throw new InvalidOperationException());
+            int.Parse(configuration["Application:RequestedItemsPerPage"] ?? throw new InvalidOperationException());
 
         if (gameGenreId is not null)
-            gamesResponse = await gameService.GetByGenreIdAndPageAsync((int)gameGenreId, pageNumber, itemsPerPage);
+            gamesResponse = await gameService.GetByGenreIdAndPageAsync((int)gameGenreId, itemsPerPage, pageNumber);
         else
-            gamesResponse = await gameService.GetByPageAsync(pageNumber, itemsPerPage);
+            gamesResponse = await gameService.GetByPageAsync(itemsPerPage, pageNumber);
 
         if (!gamesResponse.Successful) return NotFound(gamesResponse.ErrorMessage);
 
