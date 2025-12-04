@@ -1,0 +1,57 @@
+﻿@page "/counter/{startValue:int?}"
+@using System.ComponentModel.DataAnnotations
+@rendermode InteractiveServer
+
+<PageTitle>Counter</PageTitle>
+
+<h1>Counter</h1>
+
+<p role="status">Current count: @_currentCount</p>
+
+<button class="btn btn-primary row my-1" @onclick="IncrementCount">Click me</button>
+
+<EditForm EditContext="_editContext" OnSubmit="@SetCountFromForm">
+    <div class="row">
+        <InputNumber class="col-auto mx-1" @bind-Value="_formInputModel.Number"></InputNumber>
+        <button class="btn btn-primary col-auto mx-1" type="submit">Submit</button>
+    </div>
+    <DataAnnotationsValidator></DataAnnotationsValidator>
+    <ValidationSummary></ValidationSummary>
+</EditForm>
+
+@code {
+    [Parameter] public int StartValue { get; set; }
+
+    class FormInputModel
+    {
+        [Range(1, 10)] public int Number { get; set; }
+    }
+
+    private EditContext? _editContext;
+    private readonly FormInputModel _formInputModel = new();
+    private int _currentCount;
+
+    protected override void OnInitialized()
+    {
+        _editContext = new EditContext(_formInputModel);
+    }
+
+    protected override void OnParametersSet()
+    {
+        _currentCount = StartValue;
+    }
+
+    private void IncrementCount()
+    {
+        _currentCount++;
+    }
+
+    private void SetCountFromForm()
+    {
+        if (_editContext != null && _editContext.Validate())
+        {
+            _currentCount = _formInputModel.Number;
+        }
+    }
+
+}
