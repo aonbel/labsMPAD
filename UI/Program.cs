@@ -1,10 +1,19 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Serilog;
 using UI.Extensions;
+using UI.Middleware;
 using UI.Models;
 using UI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .CreateLogger();
+
+builder.Services.AddSerilog();
+builder.Services.AddSingleton(Log.Logger);
 
 builder.Services.AddHttpContextAccessor();
 
@@ -50,6 +59,8 @@ if (app.Environment.IsDevelopment()) app.UseDeveloperExceptionPage();
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseStaticFiles();
+
+app.UseNonSuccessResponseLogMiddleware();
 
 app.UseAuthentication();
 app.UseAuthorization();
